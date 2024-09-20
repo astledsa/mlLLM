@@ -239,29 +239,40 @@ class Pipleline:
         X_train, X_test, y_train, y_test = feature_engineering(df, independent, target)
         test_results, explanations =  run_preferred_models(recommended_models, X_train, y_train, X_test, y_test)
         explanations_narratives = lime_output(explanations)
-        prompt = f"""You are a data science expert, and you have been provided with a user problem statement and the results of 
-                     three machine learning models that have been trained on a dataset. Each model's feature importance has been 
-                     interpreted using the LIME (Local Interpretable Model-agnostic Explanations) interpretability model. Your 
-                     task is to provide an explanation that tells the story of the problem and the model inferences, focusing on 
-                     the role of different features and their importance.
+        prompt = f"""As a data scientist, you've analyzed a dataset to address the following problem:
 
-                     Actual probelem Statement by the user: "{self.query}"
-                     Actual output of the lime interpretability model: "{explanations_narratives}"
-                     
-                     Begin by explaining the problem that the models were trained to solve. Introduce the key objective of the 
-                     analysis and any context that helps frame the problem.Describe how the models approached the problem, emphasizing 
-                     how machine learning helped tackle the user's needs. You should briefly describe the three models used and why 
-                     they are relevant to the problem. Explain the model interpretations provided by LIME. Break down the most 
-                     important features based on their LIME attributions. Focus on why certain features were prioritized more by the 
-                     models and how their values affect the outcome. Use data storytelling techniques to weave together a compelling 
-                     narrative around the feature importance:Highlight any surprising feature contributions or unexpected results.
-                     Provide possible real-world explanations for why some features had a more positive or negative impact.
-                     Use your expertise to hypothesize why the models might have focused on these features. You may tie this back to 
-                     the nature of the problem statement. Conclude by summarizing the insights that were revealed through model 
-                     interpretation. Offer actionable takeaways or recommendations based on the feature importance and how they 
-                     influence the predictions. Make sure your explanation is clear, relatable, and approachable for both technical 
-                     and non-technical audiences.
-                    """
+{self.query}
+
+Your analysis, using interpretable machine learning techniques, has revealed these key insights:
+
+{explanations_narratives}
+
+Please provide an explanation of your findings in a clear, insightful manner that a non-technical stakeholder could understand. Your response should:
+
+1. Briefly recap the problem and why it's important to solve.
+
+2. Describe the most significant patterns or trends you found in the data. Focus on 2-3 key features that stood out in your analysis.
+
+3. For each key feature:
+   - Explain what it represents in simple terms
+   - Describe how it relates to the problem
+   - Offer potential reasons for its importance, based on your domain knowledge
+
+4. Discuss any surprising or counterintuitive findings, if any.
+
+5. Suggest 2-3 concrete actions or decisions that could be made based on these insights.
+
+6. Briefly mention any limitations of the analysis or areas for further investigation.
+
+Guidelines:
+- Use clear, jargon-free language
+- Provide context and reasoning for your insights
+- Balance detail with clarity - aim for a concise yet informative explanation
+- Feel free to use analogies or real-world examples to illustrate points
+- Avoid technical details about the model or analysis process unless directly relevant
+- Your tone should be professional but conversational, as if explaining to a colleague
+
+Remember, your goal is to convey the value and implications of your data analysis in a way that enables informed decision-making."""
         response = client.chat.completions.create(
             messages=[{
                 "role": "system",  
